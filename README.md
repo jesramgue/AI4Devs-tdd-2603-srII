@@ -66,7 +66,7 @@ npm install
 ```
 cd backend
 npm run build
-````
+```
 4. Start the backend server:
 ```
 cd backend
