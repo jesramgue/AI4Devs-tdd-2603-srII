@@ -21,6 +21,8 @@ Relevant existing configuration:
 - A `"test": "jest"` script already exists in `package.json`.
 - No `jest.config.ts` or `jest.config.js` file exists yet.
 
+Important Prisma note: every domain model (`Candidate`, `Education`, `WorkExperience`, `Resume`) instantiates its own `PrismaClient` at module level via `const prisma = new PrismaClient()`. There is no shared singleton. Tests must intercept the `@prisma/client` module itself so that every `new PrismaClient()` call returns a controlled mock — without modifying any production code.
+
 #### Frontend
 The frontend is a React 18 application bootstrapped with Create React App (CRA), written in a mix of `.js` and `.tsx` files. It intentionally runs Jest in standalone mode (not via `react-scripts test`).
 
@@ -60,7 +62,10 @@ For the **backend**, cover:
 1. Install any missing Jest + TypeScript prerequisites
 2. Install `ts-jest` and required peer packages
 3. Run `ts-jest config:init` to generate `jest.config.js`
-4. Confirm the final `"test"` script
+4. Set up the Prisma mock infrastructure:
+   - Create `src/__mocks__/prismaClient.ts` that uses `mockDeep<PrismaClient>` from `jest-mock-extended` as a singleton; the mock `PrismaClient` constructor must always return that singleton so every `new PrismaClient()` call in production models gets the same controllable instance. Include a `beforeEach` that calls `mockReset` to ensure test isolation. Re-export the real `Prisma` namespace via `jest.requireActual` so `instanceof Prisma.PrismaClientInitializationError` checks still work.
+   - Add a `moduleNameMapper` entry to `jest.config.js` that redirects `@prisma/client` to the mock file above.
+5. Confirm the final `"test"` script
 
 For the **frontend**, cover:
 1. Install `jest` and any missing prerequisites
@@ -89,4 +94,5 @@ For each command, prefix it with a one-line comment explaining what it does.
 - Backend tests will be located in `src/__tests__/` to avoid modifying `tsconfig.json`.
 - Frontend tests will also be located in `src/__tests__/` for consistency.
 - Regarding the suggested additional libraries for both packages, install them and make the necessary changes without modifying production code.
+- Set up the Prisma mock infrastructure for the backend: create the `src/__mocks__/prismaClient.ts` singleton mock and wire `moduleNameMapper` in `jest.config.js`.
 - Update any documentation in the project to include all changes done.

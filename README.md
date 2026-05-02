@@ -12,6 +12,7 @@ This project is a full-stack application with a React frontend and an Express ba
     - `presentation/`: It contains code related to the presentation layer (such as controllers).
     - `routes/`: It contains the route definitions for the API.
     - `__tests__/`: It contains the Jest unit and integration tests.
+    - `__mocks__/`: It contains `prismaClient.ts` — the singleton Prisma mock used by all tests.
   - `prisma/`: It contains the Prisma schema file for ORM.
   - `jest.config.js`: Jest configuration (ts-jest transformer, Node environment, test discovery scoped to `src/__tests__/`).
   - `tsconfig.json`: TypeScript configuration file.
@@ -98,6 +99,21 @@ The backend has a Jest + ts-jest unit testing setup. Test files live in `backend
 | `@types/jest` | TypeScript type definitions for Jest globals |
 | `supertest` + `@types/supertest` | In-process HTTP assertions for Express routes/controllers |
 | `jest-mock-extended` | Type-safe auto-mocks of `PrismaClient` for unit testing services in isolation |
+
+**Prisma mock infrastructure**
+
+Because every domain model instantiates its own `new PrismaClient()`, a `moduleNameMapper` entry in `jest.config.js` intercepts all `@prisma/client` imports and redirects them to `src/__mocks__/prismaClient.ts`. That file exports:
+
+- `prismaMock` — a `mockDeep<PrismaClient>()` singleton; import this in test files to set up return values and assert calls.
+- `PrismaClient` — a `jest.fn()` constructor that always returns `prismaMock`, so every model's local `prisma` variable points to the same mock.
+- `Prisma` — the real Prisma namespace (via `jest.requireActual`), preserving `instanceof Prisma.PrismaClientInitializationError` checks.
+- A `beforeEach(() => mockReset(prismaMock))` that automatically resets all mock state between tests.
+
+Example usage in a test file:
+```typescript
+import { prismaMock } from '../__mocks__/prismaClient';
+// prismaMock.candidate.create.mockResolvedValue({ id: 1, ... });
+```
 
 **Run all tests**
 ```sh
