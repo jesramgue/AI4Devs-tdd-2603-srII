@@ -11,12 +11,18 @@ This project is a full-stack application with a React frontend and an Express ba
     - `domain/`: It contains the business logic.
     - `presentation/`: It contains code related to the presentation layer (such as controllers).
     - `routes/`: It contains the route definitions for the API.
+    - `__tests__/`: It contains the Jest unit and integration tests.
   - `prisma/`: It contains the Prisma schema file for ORM.
+  - `jest.config.js`: Jest configuration (ts-jest transformer, Node environment, test discovery scoped to `src/__tests__/`).
   - `tsconfig.json`: TypeScript configuration file.
 - `frontend/`: It contains the client-side code written in React.
   - `src/`: It contains the source code for the frontend.
+    - `__tests__/`: It contains the Jest unit and integration tests.
   - `public/`: It contains static files such as the HTML file and images.
   - `build/`: It contains the production-ready build of the frontend.
+  - `__mocks__/`: It contains stub mocks for static assets (CSS, images) used by Jest.
+  - `babel.config.js`: Babel configuration (presets for env, React JSX, and TypeScript stripping).
+  - `jest.config.js`: Jest configuration (jsdom environment, Babel transformer, test discovery scoped to `src/__tests__/`).
 - `.env`: It contains the environment variables.
 - `docker-compose.yml`: It contains the Docker Compose configuration to manage your application's services.
 - `README.md`: This file contains information about the project and instructions on how to run it.
@@ -38,7 +44,7 @@ The backend is an Express application written in TypeScript. The src directory c
 - `infrastructure`: It contains code related to the infrastructure.
 - `presentation`: It contains code related to the presentation layer.
 - `routes`: It contains the application routes.
-- `tests`: It contains the application tests.
+- `__tests__`: It contains the Jest unit and integration tests (co-located inside `src/` so TypeScript picks them up automatically).
 
 The `prisma` folder contains the Prisma schema.
 
@@ -77,6 +83,77 @@ npm start
 ```
 
 The backend server will be running at http://localhost:3010, and the frontend will be available at http://localhost:3000.
+
+## Testing
+
+### Backend
+
+The backend has a Jest + ts-jest unit testing setup. Test files live in `backend/src/__tests__/` and must end in `.test.ts` or `.spec.ts`.
+
+**Key testing libraries**
+
+| Package | Purpose |
+|---|---|
+| `jest` + `ts-jest` | Test runner with native TypeScript support |
+| `@types/jest` | TypeScript type definitions for Jest globals |
+| `supertest` + `@types/supertest` | In-process HTTP assertions for Express routes/controllers |
+| `jest-mock-extended` | Type-safe auto-mocks of `PrismaClient` for unit testing services in isolation |
+
+**Run all tests**
+```sh
+cd backend
+npm test
+```
+
+**Run tests in watch mode**
+```sh
+cd backend
+npx jest --watch
+```
+
+**Run a single test file**
+```sh
+cd backend
+npx jest src/__tests__/<file>.test.ts
+```
+
+---
+
+### Frontend
+
+The frontend uses a standalone Jest + Babel setup (independent of `react-scripts`). Test files live in `frontend/src/__tests__/` and must end in `.test.{js,tsx}` or `.spec.{js,tsx}`.
+
+**Key testing libraries**
+
+| Package | Purpose |
+|---|---|
+| `jest` | Test runner |
+| `jest-environment-jsdom` | DOM environment — required by Jest 27+ for browser-like tests |
+| `@babel/core` + `babel-jest` | Transforms `.js` and `.tsx` files via Babel during test runs |
+| `@babel/preset-env` | Transpiles modern JS syntax (async/await, modules) to Node-compatible output |
+| `@babel/preset-react` | Transpiles JSX to `React.createElement` calls |
+| `@babel/preset-typescript` | Strips TypeScript types so Babel can process `.tsx` files |
+| `@testing-library/react` | React component rendering and querying utilities |
+| `@testing-library/jest-dom` | Custom DOM matchers (`toBeInTheDocument`, `toHaveValue`, etc.) |
+| `@testing-library/user-event` | Simulates realistic user interactions (click, type, etc.) |
+
+**Run all tests**
+```sh
+cd frontend
+npm test
+```
+
+**Run tests in watch mode**
+```sh
+cd frontend
+npx jest --watch
+```
+
+**Run a single test file**
+```sh
+cd frontend
+npx jest src/__tests__/<file>.test.tsx
+```
 
 ## Docker y PostgreSQL
 
