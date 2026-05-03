@@ -1,0 +1,27 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker-js/master/packages/core/schema/stryker-schema.json",
+  "testRunner": "jest",
+  "reporters": ["progress", "clear-text", "html"],
+  "coverageAnalysis": "perTest",
+  "checkers": ["typescript"],
+  "mutate": [
+    "src/application/validator.ts",
+    "src/application/services/candidateService.ts",
+    "src/domain/models/Candidate.ts",
+    "src/presentation/controllers/candidateController.ts",
+    "!src/__tests__/tests-iniciales.test.ts"
+  ],
+  "jest": {
+    "projectType": "custom",
+    "configFile": "jest.config.js",
+    "enableFindRelatedTests": true,
+    "config": {
+      "testPathIgnorePatterns": ["tests-iniciales.test.ts"]
+    }
+  },
+  "thresholds": {
+    "high": 70,
+    "low": 60,
+    "break": 60
+  }
+}

@@ -133,6 +133,28 @@ cd backend
 npx jest src/__tests__/<file>.test.ts
 ```
 
+**Mutation testing (Stryker)**
+
+The backend includes mutation testing via Stryker to evaluate test quality against code mutations.
+
+- Config file: `backend/stryker.conf.json`
+- Scope (prioritized):
+  - `src/application/validator.ts`
+  - `src/application/services/candidateService.ts`
+  - `src/domain/models/Candidate.ts`
+  - `src/presentation/controllers/candidateController.ts`
+- Excluded aggregator test file: `src/__tests__/tests-iniciales.test.ts`
+- Score gate (thresholds):
+  - `low: 60`
+  - `high: 70`
+  - `break: 60`
+
+**Run mutation tests**
+```sh
+cd backend
+npm run test:mutation
+```
+
 ---
 
 ### Frontend

@@ -1,3 +1,5 @@
+# ✍️ Unit tests creation for LTI - JRG
+
 ## PROMPT 1 — Jest Testing Environment Setup Plan
 
 You are a Senior Software Engineer and Jest testing expert with deep knowledge of TypeScript, Node.js testing architectures, and test automation best practices.
@@ -527,7 +529,7 @@ GIVEN a POST request that causes an unknown non-Error throw  WHEN addCandidate t
 | 5 | **`console.log(error)` in Candidate.save() update path** — same issue |
 ```
 
-## PROMPT 5 - Tests Creation
+## PROMPT 5 - Tests Creation and Execution
 You are a Senior Software Engineer and Jest testing expert with deep knowledge of TypeScript, Node.js, and test automation best practices. 
 Considering the context from the previous Acceptance Criteria and the Testing Enviroment created, you are writing unit tests for the "add candidate" feature of a Node.js + Express + TypeScript backend using Prisma as ORM.
 RULES
@@ -812,4 +814,173 @@ All 7 test suites pass — **109/109 tests green**. Here's what was fixed:
 2. **candidate.model.test.ts** — The `moduleNameMapper` redirects `@prisma/client` to the mock for all modules under test (including the mock file itself when using `jest.requireActual`). Fixed by:
    - Loading `PrismaClientInitializationError` via `require('@prisma/client/default')` — the mapper only intercepts the bare `^@prisma/client$` specifier, not the `default` sub-path.
    - Same fix applied to the mock file's `Prisma` namespace export.
+```
+
+PROMPT 6 - Including Mutation Tests
+## Context
+You are a Senior Software Engineer and Jest testing expert with deep knowledge of TypeScript, Node.js testing architectures, and test automation best practices. As this repo is a strong candidate for mutation testing, especially in the backend business rules where branch/error logic is dense.
+
+## Tasks
+Create mutant tests for the repository, consider the and prioritize mutation testing in: 
+- validator.ts where we have the highest rule density (regex, boundaries, -- candidateService.ts for being the critical orchestration logic (order, conditional relation saves, error translation)
+- candidate.ts for having complex create/update branching and Prisma-specific error handling 
+- candidateController.ts is lower priority than service/validator, but useful for response-shape mutants (status codes, error fallback, body structure).
+- Include mutation test documentation in README.md
+
+## Rules
+The mutation score gate will be 60% - 70%
+Exclude aggregator file "tests-iniciales.test.ts" (It’s just an import entrypoint; mutating it doesn’t add quality value)
+
+## PROMPT 6 - RESPONSE
+```text
+I’ll set up mutation testing for the backend with Stryker, target the prioritized files, exclude tests-iniciales.test.ts, configure a 60–70% score gate, and then validate the setup command runs.
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/jest.config.js)
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/package.json)
+
+I’ve identified the right integration points; next I’ll install Stryker packages and then add backend mutation config and npm scripts for your targeted files only.
+
+Ran terminal command:  cd /Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend && npm install --save-dev @stryker-mutator/core @stryker-mutator/jest-runner @stryker-mutator/typescript-checker
+
+Searched for files matching `**/stryker.conf.*`, no matches
+
+Generating patch (14 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/package.json)
+
+
+```
+
+```
+
+
+Created [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/stryker.conf.json)
+
+I’ve added the mutation config and script; now I’ll run a dry-run of Stryker to ensure the setup is valid without executing full mutation generation.
+
+Ran terminal command:  npx stryker run --dry-run
+Completed with input:  npx stryker run --dry-run
+
+Ran terminal command:  npx stryker run
+
+Read [](file:///Users/jesusramirezguerrero/Library/Application%20Support/Code/User/workspaceStorage/4f787254524647e992d64c439600fa89/GitHub.copilot-chat/chat-session-resources/a6228a54-611d-4b8c-8641-d0835b2bb5ae/call_m6css7lNAQy0We6jOjCucoTo__vscode-1777716177223/content.txt#1-1), lines 1 to 260
+
+Read [](file:///Users/jesusramirezguerrero/Library/Application%20Support/Code/User/workspaceStorage/4f787254524647e992d64c439600fa89/GitHub.copilot-chat/chat-session-resources/a6228a54-611d-4b8c-8641-d0835b2bb5ae/call_m6css7lNAQy0We6jOjCucoTo__vscode-1777716177223/content.txt#260-260), lines 260 to 430
+
+Ran terminal command:  cd /Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII && git status --short
+
+I’ve completed the mutation setup and run; I’ll do one small cleanup step so only intentional config/dependency changes remain (no generated report artifacts committed).
+
+Ran terminal command:  rm -rf backend/reports
+
+Searched for files matching `**/.gitignore`, 1 match
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/.gitignore)
+
+Generating patch (7 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/.gitignore)
+
+
+```
+
+```
+
+
+Ran terminal command:  git status --short
+
+Implemented. Mutation testing is now configured and executed for the prioritized backend files, with the requested gate and exclusions.
+
+## What I changed
+
+1. Added Stryker dependencies in package.json (and lockfile package-lock.json):
+- @stryker-mutator/core
+- @stryker-mutator/jest-runner
+- @stryker-mutator/typescript-checker
+
+2. Added mutation script in package.json:
+- test:mutation → stryker run
+
+3. Created Stryker configuration in stryker.conf.json with:
+- Mutate scope limited to:
+  - src/application/validator.ts
+  - src/application/services/candidateService.ts
+  - src/domain/models/Candidate.ts
+  - src/presentation/controllers/candidateController.ts
+- Exclusion for aggregator test:
+  - !src/__tests__/tests-iniciales.test.ts
+- Jest custom config + testPathIgnorePatterns for tests-iniciales.test.ts
+- Thresholds set to your requested gate:
+  - high: 70
+  - low: 60
+  - break: 60
+
+4. Added ignore rule in /.gitignore:
+- **/reports/mutation
+This prevents generated mutation HTML artifacts from being committed.
+
+## Verification run
+
+I executed mutation testing with:
+- npm run test:mutation (equivalent to stryker run in backend)
+
+Result:
+1. Final mutation score: 88.56%
+2. Gate status: passed (>= break threshold 60)
+3. Prioritized files were included exactly as requested.
+4. Aggregator test tests-iniciales.test.ts was excluded from mutation relevance.
+
+## Notes
+
+1. The run reported surviving mutants mainly in:
+- validator.ts
+- Candidate.ts
+
+2. This is expected at first mutation rollout and is useful to guide next test hardening iterations.
+
+3. There is an existing unrelated modified file in your working tree:
+- prompts-JRG.md
+I did not alter that file in this mutation setup work.
+
+```
+
+```
+
+I’ll update the backend testing section in README to document mutation testing usage, scope, thresholds, and the command to run it.
+
+Searched for regex `## Testing|### Backend|Run all tests|Prisma mock infrastructure` (`**/README.md`), 7 results
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/README.md#88-88), lines 88 to 190
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/README.md#260-260), lines 260 to 360
+
+I’m now adding a Backend Mutation Testing subsection to README with the exact run command, configured scope, score gate, and exclusion of the aggregator entry test file.
+
+Generating patch (33 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/README.md)
+
+
+```
+
+```
+
+
+Searched for regex `Mutation testing \(Stryker\)|test:mutation|stryker.conf.json|tests-iniciales.test.ts|break: 60` (`**/README.md`), 5 results
+
+Done. I added mutation testing documentation to README.md.
+
+Included in the new section:
+- What mutation testing is used for in backend quality checks
+- Config location: stryker.conf.json
+- Prioritized mutation scope:
+  - validator.ts
+  - candidateService.ts
+  - Candidate.ts
+  - candidateController.ts
+- Explicit exclusion of aggregator file:
+  - tests-iniciales.test.ts
+- Score gate thresholds (60-70 policy):
+  - low 60
+  - high 70
+  - break 60
+- Run command:
+  - npm run test:mutation
+
+Made changes.
 ```
