@@ -4,7 +4,7 @@
 
 - [PROMPT 1 — Jest Testing Environment Setup Plan](#prompt-1--jest-testing-environment-setup-plan)
 - [PROMPT 1 - RESPONSE](#prompt-1---response)
-- [PROMPT 2: Confirm the Plan and Update Project Documentation](#prompt-2-confirm-the-plan-and-update-project-documentation)
+- [PROMPT 2 - Confirm the Plan and Update Project Documentation](#prompt-2---confirm-the-plan-and-update-project-documentation)
 - [PROMPT 2 - RESPONSE](#prompt-2---response)
 - [PROMPT 3 - Verify where the candidate insertion logic is located in order to later verify if the tests are correct and meet the acceptance criteria](#prompt-3---verify-where-the-candidate-insertion-logic-is-located-in-order-to-later-verify-if-the-tests-are-correct-and-meet-the-acceptance-criteria)
 - [PROMPT 3 - RESPONSE](#prompt-3---response)
@@ -153,7 +153,7 @@ Everything is already in place — no net-new installs required.
 Ready to proceed with **Step 2** upon approval.
 ```
 
-## PROMPT 2: Confirm the Plan and Update Project Documentation
+## PROMPT 2 - Confirm the Plan and Update Project Documentation
 
 - Proceed with the configuration artifact for both backend and frontend.
 - Backend tests will be located in `src/__tests__/` to avoid modifying `tsconfig.json`.
