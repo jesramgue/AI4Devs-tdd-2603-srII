@@ -1,5 +1,21 @@
 # ✍️ Unit tests creation for LTI - JRG
 
+## Index
+
+- [PROMPT 1 — Jest Testing Environment Setup Plan](#prompt-1--jest-testing-environment-setup-plan)
+- [PROMPT 1 - RESPONSE](#prompt-1---response)
+- [PROMPT 2: Confirm the Plan and Update Project Documentation](#prompt-2-confirm-the-plan-and-update-project-documentation)
+- [PROMPT 2 - RESPONSE](#prompt-2---response)
+- [PROMPT 3 - Verify where the candidate insertion logic is located in order to later verify if the tests are correct and meet the acceptance criteria](#prompt-3---verify-where-the-candidate-insertion-logic-is-located-in-order-to-later-verify-if-the-tests-are-correct-and-meet-the-acceptance-criteria)
+- [PROMPT 3 - RESPONSE](#prompt-3---response)
+- [PROMPT 4 - Extract all Acceptance Criteria from inserting candidates functionality](#prompt-4---extract-all-acceptance-criteria-from-inserting-candidates-functionality)
+- [PROMPT 4 - RESPONSE](#prompt-4---response)
+- [PROMPT 5 - Tests Creation and Execution](#prompt-5---tests-creation-and-execution)
+- [PROMPT 5 - RESPONSE](#prompt-5---response)
+- [PROMPT 6 - Including Mutation Tests](#prompt-6---including-mutation-tests)
+- [PROMPT 6 - RESPONSE](#prompt-6---response)
+
+
 ## PROMPT 1 — Jest Testing Environment Setup Plan
 
 You are a Senior Software Engineer and Jest testing expert with deep knowledge of TypeScript, Node.js testing architectures, and test automation best practices.
@@ -816,18 +832,18 @@ All 7 test suites pass — **109/109 tests green**. Here's what was fixed:
    - Same fix applied to the mock file's `Prisma` namespace export.
 ```
 
-PROMPT 6 - Including Mutation Tests
-## Context
+## PROMPT 6 - Including Mutation Tests
+### Context
 You are a Senior Software Engineer and Jest testing expert with deep knowledge of TypeScript, Node.js testing architectures, and test automation best practices. As this repo is a strong candidate for mutation testing, especially in the backend business rules where branch/error logic is dense.
 
-## Tasks
+### Tasks
 Create mutant tests for the repository, consider the and prioritize mutation testing in: 
 - validator.ts where we have the highest rule density (regex, boundaries, -- candidateService.ts for being the critical orchestration logic (order, conditional relation saves, error translation)
 - candidate.ts for having complex create/update branching and Prisma-specific error handling 
 - candidateController.ts is lower priority than service/validator, but useful for response-shape mutants (status codes, error fallback, body structure).
 - Include mutation test documentation in README.md
 
-## Rules
+### Rules
 The mutation score gate will be 60% - 70%
 Exclude aggregator file "tests-JRG.test.ts" (It’s just an import entrypoint; mutating it doesn’t add quality value)
 
