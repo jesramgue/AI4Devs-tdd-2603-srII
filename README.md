@@ -106,7 +106,7 @@ Because every domain model instantiates its own `new PrismaClient()`, a `moduleN
 
 - `prismaMock` — a `mockDeep<PrismaClient>()` singleton; import this in test files to set up return values and assert calls.
 - `PrismaClient` — a `jest.fn()` constructor that always returns `prismaMock`, so every model's local `prisma` variable points to the same mock.
-- `Prisma` — the real Prisma namespace (via `jest.requireActual`), preserving `instanceof Prisma.PrismaClientInitializationError` checks.
+- `Prisma` — the real Prisma namespace loaded from `@prisma/client/default` (bypassing the Jest mapper), preserving `instanceof Prisma.PrismaClientInitializationError` checks.
 - A `beforeEach(() => mockReset(prismaMock))` that automatically resets all mock state between tests.
 
 Example usage in a test file:
