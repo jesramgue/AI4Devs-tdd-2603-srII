@@ -143,7 +143,7 @@ The backend includes mutation testing via Stryker to evaluate test quality again
   - `src/application/services/candidateService.ts`
   - `src/domain/models/Candidate.ts`
   - `src/presentation/controllers/candidateController.ts`
-- Excluded aggregator test file: `src/__tests__/tests-JRG.test.ts`
+- Excluded aggregator test file: `src/tests/tests-JRG.test.ts`
 - Score gate (thresholds):
   - `low: 60`
   - `high: 70`

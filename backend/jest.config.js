@@ -9,7 +9,7 @@ module.exports = {
     ...tsJestTransformCfg,
   },
   roots: ["<rootDir>/src"],
-  testMatch: ["**/__tests__/**/*.test.ts", "**/__tests__/**/*.spec.ts"],
+  testMatch: ["**/__tests__/**/*.test.ts", "**/__tests__/**/*.spec.ts", "**/tests/**/*.test.ts", "**/tests/**/*.spec.ts"],
   moduleNameMapper: {
     // Redirect all @prisma/client imports to the singleton mock so that every
     // `new PrismaClient()` in production models returns the same mock instance.

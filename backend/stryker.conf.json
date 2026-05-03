@@ -9,7 +9,7 @@
     "src/application/services/candidateService.ts",
     "src/domain/models/Candidate.ts",
     "src/presentation/controllers/candidateController.ts",
-    "!src/__tests__/tests-JRG.test.ts"
+    "!src/tests/tests-JRG.test.ts"
   ],
   "jest": {
     "projectType": "custom",
