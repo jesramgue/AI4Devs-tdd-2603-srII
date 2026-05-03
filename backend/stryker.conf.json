@@ -9,14 +9,14 @@
     "src/application/services/candidateService.ts",
     "src/domain/models/Candidate.ts",
     "src/presentation/controllers/candidateController.ts",
-    "!src/__tests__/tests-iniciales.test.ts"
+    "!src/__tests__/tests-JRG.test.ts"
   ],
   "jest": {
     "projectType": "custom",
     "configFile": "jest.config.js",
     "enableFindRelatedTests": true,
     "config": {
-      "testPathIgnorePatterns": ["tests-iniciales.test.ts"]
+      "testPathIgnorePatterns": ["tests-JRG.test.ts"]
     }
   },
   "thresholds": {

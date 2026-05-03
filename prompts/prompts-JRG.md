@@ -829,11 +829,11 @@ Create mutant tests for the repository, consider the and prioritize mutation tes
 
 ## Rules
 The mutation score gate will be 60% - 70%
-Exclude aggregator file "tests-iniciales.test.ts" (It’s just an import entrypoint; mutating it doesn’t add quality value)
+Exclude aggregator file "tests-JRG.test.ts" (It’s just an import entrypoint; mutating it doesn’t add quality value)
 
 ## PROMPT 6 - RESPONSE
 ```text
-I’ll set up mutation testing for the backend with Stryker, target the prioritized files, exclude tests-iniciales.test.ts, configure a 60–70% score gate, and then validate the setup command runs.
+I’ll set up mutation testing for the backend with Stryker, target the prioritized files, exclude tests-JRG.test.ts, configure a 60–70% score gate, and then validate the setup command runs.
 
 Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/jest.config.js)
 
@@ -905,8 +905,8 @@ Implemented. Mutation testing is now configured and executed for the prioritized
   - src/domain/models/Candidate.ts
   - src/presentation/controllers/candidateController.ts
 - Exclusion for aggregator test:
-  - !src/__tests__/tests-iniciales.test.ts
-- Jest custom config + testPathIgnorePatterns for tests-iniciales.test.ts
+  - !src/__tests__/tests-JRG.test.ts
+- Jest custom config + testPathIgnorePatterns for tests-JRG.test.ts
 - Thresholds set to your requested gate:
   - high: 70
   - low: 60
@@ -925,7 +925,7 @@ Result:
 1. Final mutation score: 88.56%
 2. Gate status: passed (>= break threshold 60)
 3. Prioritized files were included exactly as requested.
-4. Aggregator test tests-iniciales.test.ts was excluded from mutation relevance.
+4. Aggregator test tests-JRG.test.ts was excluded from mutation relevance.
 
 ## Notes
 
@@ -961,7 +961,7 @@ Generating patch (33 lines) in [](file:///Users/jesusramirezguerrero/dev/project
 ```
 
 
-Searched for regex `Mutation testing \(Stryker\)|test:mutation|stryker.conf.json|tests-iniciales.test.ts|break: 60` (`**/README.md`), 5 results
+Searched for regex `Mutation testing \(Stryker\)|test:mutation|stryker.conf.json|tests-JRG.test.ts|break: 60` (`**/README.md`), 5 results
 
 Done. I added mutation testing documentation to README.md.
 
@@ -974,7 +974,7 @@ Included in the new section:
   - Candidate.ts
   - candidateController.ts
 - Explicit exclusion of aggregator file:
-  - tests-iniciales.test.ts
+  - tests-JRG.test.ts
 - Score gate thresholds (60-70 policy):
   - low 60
   - high 70
