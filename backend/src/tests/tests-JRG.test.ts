@@ -5,10 +5,10 @@
  * per-layer test organization while also providing a single formal entry file.
  */
 
-import './validator.test';
-import './candidate.model.test';
-import './education.model.test';
-import './workExperience.model.test';
-import './resume.model.test';
-import './candidateService.test';
-import './candidateController.test';
+import '../__tests__/validator.test';
+import '../__tests__/candidate.model.test';
+import '../__tests__/education.model.test';
+import '../__tests__/workExperience.model.test';
+import '../__tests__/resume.model.test';
+import '../__tests__/candidateService.test';
+import '../__tests__/candidateController.test';

@@ -12,9 +12,10 @@ This project is a full-stack application with a React frontend and an Express ba
     - `presentation/`: It contains code related to the presentation layer (such as controllers).
     - `routes/`: It contains the route definitions for the API.
     - `__tests__/`: It contains the Jest unit and integration tests.
+    - `tests/`: It contains the aggregator Jest entry test file.
     - `__mocks__/`: It contains `prismaClient.ts` — the singleton Prisma mock used by all tests.
   - `prisma/`: It contains the Prisma schema file for ORM.
-  - `jest.config.js`: Jest configuration (ts-jest transformer, Node environment, test discovery scoped to `src/__tests__/`).
+  - `jest.config.js`: Jest configuration (ts-jest transformer, Node environment, test discovery in `src/__tests__/` and `src/tests/`, including the `**/tests/**/*.test.ts` pattern).
   - `tsconfig.json`: TypeScript configuration file.
 - `frontend/`: It contains the client-side code written in React.
   - `src/`: It contains the source code for the frontend.
@@ -45,7 +46,8 @@ The backend is an Express application written in TypeScript. The src directory c
 - `infrastructure`: It contains code related to the infrastructure.
 - `presentation`: It contains code related to the presentation layer.
 - `routes`: It contains the application routes.
-- `__tests__`: It contains the Jest unit and integration tests (co-located inside `src/` so TypeScript picks them up automatically).
+- `__tests__`: It contains modular Jest unit and integration tests (co-located inside `src/` so TypeScript picks them up automatically).
+- `tests`: It contains the aggregator Jest entry test file (`tests-JRG.test.ts`) that imports the modular suites.
 
 The `prisma` folder contains the Prisma schema.
 
@@ -89,7 +91,7 @@ The backend server will be running at http://localhost:3010, and the frontend wi
 
 ### Backend
 
-The backend has a Jest + ts-jest unit testing setup. Test files live in `backend/src/__tests__/` and must end in `.test.ts` or `.spec.ts`.
+The backend has a Jest + ts-jest unit testing setup. Test files are discovered in `backend/src/__tests__/` and `backend/src/tests/`, including the `**/tests/**/*.test.ts` pattern (for files like `src/tests/tests-JRG.test.ts`), and must end in `.test.ts` or `.spec.ts`.
 
 **Key testing libraries**
 
@@ -106,7 +108,7 @@ Because every domain model instantiates its own `new PrismaClient()`, a `moduleN
 
 - `prismaMock` — a `mockDeep<PrismaClient>()` singleton; import this in test files to set up return values and assert calls.
 - `PrismaClient` — a `jest.fn()` constructor that always returns `prismaMock`, so every model's local `prisma` variable points to the same mock.
-- `Prisma` — the real Prisma namespace loaded from `@prisma/client/default` (bypassing the Jest mapper), preserving `instanceof Prisma.PrismaClientInitializationError` checks.
+- `Prisma` — the real Prisma namespace loaded via `jest.requireActual(...)`, preserving `instanceof Prisma.PrismaClientInitializationError` checks.
 - A `beforeEach(() => mockReset(prismaMock))` that automatically resets all mock state between tests.
 
 Example usage in a test file:

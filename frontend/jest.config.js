@@ -14,5 +14,5 @@ module.exports = {
     "\\.(css|less|sass|scss)$": "<rootDir>/__mocks__/styleMock.js",
     "\\.(jpg|jpeg|png|gif|svg|ico|webp)$": "<rootDir>/__mocks__/fileMock.js",
   },
-  setupFilesAfterEnv: ["@testing-library/jest-dom/extend-expect"],
+  setupFilesAfterEnv: ["@testing-library/jest-dom"],
 };
