@@ -14,6 +14,8 @@
 - [PROMPT 5 - RESPONSE](#prompt-5---response)
 - [PROMPT 6 - Including Mutation Tests](#prompt-6---including-mutation-tests)
 - [PROMPT 6 - RESPONSE](#prompt-6---response)
+- [PROMPT 7 - Relocating tests-JRG.test.ts to the correct folder as outlined in the requirements](#prompt-7---relocating-tests-jrgtestts-to-the-correct-folder-as-outlined-in-the-requirements)
+- [PROMPT 7 - RESPONSE](#prompt-7---response)
 
 
 ## PROMPT 1 — Jest Testing Environment Setup Plan
