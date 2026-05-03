@@ -8,8 +8,7 @@
     "src/application/validator.ts",
     "src/application/services/candidateService.ts",
     "src/domain/models/Candidate.ts",
-    "src/presentation/controllers/candidateController.ts",
-    "!src/tests/tests-JRG.test.ts"
+    "src/presentation/controllers/candidateController.ts"
   ],
   "jest": {
     "projectType": "custom",

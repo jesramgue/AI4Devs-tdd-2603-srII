@@ -26,10 +26,9 @@ export const PrismaClient = jest.fn().mockImplementation(() => prismaMock);
 /**
  * Re-export the real Prisma namespace so that `instanceof` checks such as
  * `error instanceof Prisma.PrismaClientInitializationError` still work in tests.
- *
- * We load via the `default.js` sub-path because the moduleNameMapper only
- * intercepts the bare `@prisma/client` specifier, not sub-path imports, so
- * this bypasses the mapper and reaches the real generated client.
  */
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-export const Prisma = (require('@prisma/client/default') as typeof import('@prisma/client')).Prisma;
+const prismaActual = jest.requireActual(
+  require.resolve('@prisma/client', { paths: [process.cwd()] })
+) as typeof import('@prisma/client');
+
+export const Prisma = prismaActual.Prisma;

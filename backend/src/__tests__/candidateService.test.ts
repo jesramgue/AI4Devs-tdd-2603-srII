@@ -39,7 +39,7 @@ function stubCandidateInstance(saveFn: jest.Mock) {
 }
 
 beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
 });
 
 // ---------------------------------------------------------------------------

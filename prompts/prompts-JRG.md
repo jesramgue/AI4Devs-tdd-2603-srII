@@ -16,6 +16,8 @@
 - [PROMPT 6 - RESPONSE](#prompt-6---response)
 - [PROMPT 7 - Relocating tests-JRG.test.ts to the correct folder as outlined in the requirements](#prompt-7---relocating-tests-jrgtestts-to-the-correct-folder-as-outlined-in-the-requirements)
 - [PROMPT 7 - RESPONSE](#prompt-7---response)
+- [PROMPT 8 - Fixing CodeRabbitAI Review](#prompt-8---fixing-coderabbitai-review)
+- [PROMPT 8 - RESPONSE](#prompt-8---response)
 
 
 ## PROMPT 1 — Jest Testing Environment Setup Plan
@@ -1126,6 +1128,274 @@ Done! I've completed the move and updated all necessary documentation:
 - tests — Aggregator entry file (tests-JRG.test.ts only)
 
 Both directories are now monitored by Jest. The separation improves clarity—the tests/ directory is now clearly a dedicated entry point for the full test suite.
+
+Made changes.
+```
+
+## PROMPT 8 - Fixing CodeRabbitAI Review
+Verify each finding against the current code and only fix it if needed.
+
+Inline comments:
+In `@backend/src/__mocks__/prismaClient.ts`:
+- Around line 34-35: The mock currently imports Prisma via a private internal
+path using the export const Prisma line which can break on Prisma upgrades or
+with pnpm; replace that require with Jest's stable API by using
+jest.requireActual('@prisma/client') to load the real module and then re-export
+its Prisma namespace (i.e., obtain the real module via jest.requireActual and
+assign/export its Prisma value instead of require('@prisma/client/default')).
+Ensure the change targets the same exported symbol (Prisma) so existing tests
+using the mocked prisma client continue to work.
+
+In `@backend/src/tests/tests-JRG.test.ts`:
+- Around line 8-14: The aggregator tests file tests-JRG.test.ts now imports from
+the wrong relative location after the directory move; update each import (e.g.,
+'./validator.test', './candidate.model.test', './education.model.test',
+'./workExperience.model.test', './resume.model.test', './candidateService.test',
+'./candidateController.test') to point to the sibling __tests__ directory (e.g.,
+'../__tests__/validator.test', etc.) so the modules are actually resolved and
+executed at runtime.
+
+In `@frontend/jest.config.js`:
+- Line 5: The project's Jest and babel-jest major versions are mismatched
+(package names "jest" vs "babel-jest"), which will break tests; fix by aligning
+their major versions in frontend/package.json so both use the same major (either
+upgrade "jest" to ^30.x to match "babel-jest": ^30.3.0 or downgrade "babel-jest"
+to ^27.x to match "jest": ^27.5.1), then run install and verify the transformer
+mapping "^.+\\.(js|jsx|ts|tsx)$": "babel-jest" in jest.config.js still works.
+
+In `@frontend/package.json`:
+- Around line 54-55: The package.json lists mismatched Jest packages: keep jest
+at ^27.5.1 and change babel-jest to the matching major version (e.g., ^27.x) so
+peer versions align; update the "babel-jest" dependency in package.json to a
+27.x release (matching "jest": "^27.5.1") and run npm/yarn install to verify no
+peer dependency errors, ensuring consistency with
+"jest-environment-jsdom@^27.5.1".
+
+---
+
+Nitpick comments:
+In `@backend/src/__tests__/candidateService.test.ts`:
+- Around line 41-43: Replace the jest.clearAllMocks() call in the beforeEach
+block with jest.resetAllMocks() to ensure mock implementations are cleared
+between tests; this prevents MockCandidate.mockImplementation (used by
+stubCandidateInstance) from persisting across tests and accidentally affecting
+tests that call new Candidate() without re-stubbing. Ensure the change touches
+the beforeEach that currently invokes jest.clearAllMocks() so all mocks, spies,
+and implementation states are fully reset before each test.
+
+In `@backend/stryker.conf.json`:
+- Line 12: Remove the redundant negation string "!src/tests/tests-JRG.test.ts"
+from the mutate array (the mutate property in the configuration) because the
+current positive glob patterns already limit mutation to production files and no
+test files are matched; rely on the existing jest.testPathIgnorePatterns setting
+to exclude that test instead. Locate the mutate array entry containing the exact
+symbol "!src/tests/tests-JRG.test.ts" and delete it, leaving the remaining
+positive globs intact.
+
+In `@frontend/jest.config.js`:
+- Line 17: The jest config currently references the removed v6 entrypoint
+"@testing-library/jest-dom/extend-expect"; update the setupFilesAfterEnv entry
+to use the stable package entry "@testing-library/jest-dom" instead so
+setupFilesAfterEnv: ["@testing-library/jest-dom"] works with both v5 and v6;
+modify the setupFilesAfterEnv array in frontend/jest.config.js (look for
+setupFilesAfterEnv and the string "@testing-library/jest-dom/extend-expect")
+accordingly.
+
+In `@README.md`:
+- Line 17: Update the README test discovery description to include both
+directories and the actual Jest pattern: mention that Jest (see jest.config.js)
+discovers tests in src/__tests__/ and src/tests/ and also via the glob pattern
+'**/tests/**/*.test.ts' (which is how files like src/tests/tests-JRG.test.ts are
+picked up); edit the lines that currently say "scoped to `src/__tests__/`" (and
+the similar line at 92) to explicitly list `src/__tests__/`, `src/tests/`, and
+the '**/tests/**/*.test.ts' pattern so the README matches
+backend/jest.config.js.
+
+## PROMPT 8 - RESPONSE
+```text
+I’ll verify each comment against the current files first, then only apply fixes where the issue is actually present, and finally run targeted installs/checks for the frontend dependency alignment.
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/frontend/jest.config.js)
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/src/__tests__/candidateService.test.ts#1-1), lines 1 to 110
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/stryker.conf.json)
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/README.md#1-1), lines 1 to 220
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/src/__mocks__/prismaClient.ts)
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/src/tests/tests-JRG.test.ts)
+
+Read [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/frontend/package.json)
+
+I verified all findings against the current code: each one is still present, so I’m now applying targeted fixes across backend mock/tests/config, frontend Jest/deps, and README wording.
+
+Generating patch (15 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/src/__mocks__/prismaClient.ts)
+
+
+```
+
+```
+
+
+Generating patch (18 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/src/tests/tests-JRG.test.ts)
+
+
+```
+
+```
+
+
+Generating patch (8 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/src/__tests__/candidateService.test.ts)
+
+
+```
+
+```
+
+
+Generating patch (12 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/stryker.conf.json)
+
+
+```
+
+```
+
+
+Generating patch (7 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/frontend/jest.config.js)
+
+
+```
+
+```
+Quick progress update: all code/config fixes are in place. Next I’ll update the README wording to match actual backend discovery patterns, then install frontend deps and run targeted verification commands.
+
+Generating patch (15 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/frontend/package.json)
+
+
+```
+
+```
+
+
+Generating patch (9 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/README.md)
+
+
+```
+
+```
+
+
+Ran terminal command:  cd /Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/frontend && npm install
+
+Ran terminal command:  npm ls jest babel-jest jest-environment-jsdom --depth=0
+
+Ran terminal command:  cd /Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend && npx jest --no-coverage --runInBand src/tests/tests-JRG.test.ts
+Completed with input:  cd /Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend && npx jest --no-coverage --runInBand src/tests/tests-JRG.test.ts
+
+Read [](file:///Users/jesusramirezguerrero/Library/Application%20Support/Code/User/workspaceStorage/4f787254524647e992d64c439600fa89/GitHub.copilot-chat/chat-session-resources/a6228a54-611d-4b8c-8641-d0835b2bb5ae/call_wJbrXT26Zl8UiznyCqNT3Rj1__vscode-1777716177293/content.txt#1-1), lines 1 to 200
+
+Read [](file:///Users/jesusramirezguerrero/Library/Application%20Support/Code/User/workspaceStorage/4f787254524647e992d64c439600fa89/GitHub.copilot-chat/chat-session-resources/a6228a54-611d-4b8c-8641-d0835b2bb5ae/call_wJbrXT26Zl8UiznyCqNT3Rj1__vscode-1777716177293/content.txt#200-200), lines 200 to 420
+
+Read [](file:///Users/jesusramirezguerrero/Library/Application%20Support/Code/User/workspaceStorage/4f787254524647e992d64c439600fa89/GitHub.copilot-chat/chat-session-resources/a6228a54-611d-4b8c-8641-d0835b2bb5ae/call_wJbrXT26Zl8UiznyCqNT3Rj1__vscode-1777716177293/content.txt#420-420), lines 420 to 448
+
+I found one regression from the Prisma change during verification: `jest.requireActual('@prisma/client')` is colliding with the backend module mapper in this repo, so I’m adjusting that implementation to keep Jest’s stable API while bypassing the mapper safely, then re-running checks.
+
+Generating patch (14 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/backend/src/__mocks__/prismaClient.ts)
+
+
+```
+
+```
+
+
+Generating patch (7 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/README.md)
+
+
+```
+
+```
+
+
+Ran terminal command:  npx jest --no-coverage --runInBand src/tests/tests-JRG.test.ts
+
+Ran terminal command:  cd /Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/frontend && npx jest --config jest.config.js --listTests
+
+Read [](file:///Users/jesusramirezguerrero/Library/Application%20Support/Code/User/workspaceStorage/4f787254524647e992d64c439600fa89/GitHub.copilot-chat/chat-session-resources/a6228a54-611d-4b8c-8641-d0835b2bb5ae/call_4APi1160xqTd3v0dMjBCZU4Y__vscode-1777716177299/content.txt#1-1), lines 1 to 220
+
+Read [](file:///Users/jesusramirezguerrero/Library/Application%20Support/Code/User/workspaceStorage/4f787254524647e992d64c439600fa89/GitHub.copilot-chat/chat-session-resources/a6228a54-611d-4b8c-8641-d0835b2bb5ae/call_4APi1160xqTd3v0dMjBCZU4Y__vscode-1777716177299/content.txt#220-220), lines 220 to 267
+
+Ran terminal command:  npx jest --config jest.config.js --showConfig | rg "babel-jest|setupFilesAfterEnv|jest-dom"
+Completed with input:  npx jest --config jest.config.js --showConfig | rg "babel-jest|setupFilesAfterEnv|jest-dom"
+
+Ran terminal command:  npx jest --config jest.config.js --showConfig | grep -E "babel-jest|setupFilesAfterEnv|jest-dom"
+
+All requested findings have now been addressed and validated with targeted checks; I’m doing one final status pass so I can report exactly what was fixed and why.
+
+Ran terminal command:  cd /Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII && git status --short
+
+Ran terminal command:  nl -ba backend/src/__mocks__/prismaClient.ts | sed -n '1,120p' && echo '---' && nl -ba backend/src/tests/tests-JRG.test.ts | sed -n '1,80p' && echo '---' && nl -ba frontend/jest.config.js | sed -n '1,80p' && echo '---' && nl -ba frontend/package.json | sed -n '45,90p' && echo '---' && nl -ba backend/src/__tests__/candidateService.test.ts | sed -n '30,60p' && echo '---' && nl -ba backend/stryker.conf.json | sed -n '1,40p' && echo '---' && nl -ba README.md | sed -n '10,120p'
+
+Read [](file:///Users/jesusramirezguerrero/Library/Application%20Support/Code/User/workspaceStorage/4f787254524647e992d64c439600fa89/GitHub.copilot-chat/chat-session-resources/a6228a54-611d-4b8c-8641-d0835b2bb5ae/call_BrGUsTYN7Ukcd6R8MVQEewU3__vscode-1777716177306/content.txt)
+
+Generating patch (12 lines) in [](file:///Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/README.md)
+
+
+```
+
+```
+
+
+Ran terminal command:  cd /Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII/frontend && npx jest --config jest.config.js --passWithNoTests --runInBand
+
+Ran terminal command:  cd /Users/jesusramirezguerrero/dev/projects/personal/AI4Devs-tdd-2603-srII && git status --short
+
+Ran terminal command:  nl -ba README.md | sed -n '10,120p'
+
+Verified against current code and fixed only where the finding was still valid. All listed findings were valid and required changes.
+
+1. Prisma namespace loading in backend mock: fixed  
+Changed the Prisma export to use Jest’s stable requireActual flow, with a safe resolution path to avoid mapper recursion in this repo.  
+Updated: prismaClient.ts
+
+2. Aggregator imports after file move: fixed  
+All imports now point to the sibling __tests__ directory so runtime resolution works.  
+Updated: tests-JRG.test.ts
+
+3. Frontend Jest and babel-jest major mismatch: fixed  
+Kept Jest on 27.x and aligned babel-jest to 27.x as requested.  
+Updated: package.json
+
+4. Frontend setupFilesAfterEnv legacy path: fixed  
+Replaced removed entrypoint with stable package entry.  
+Updated: jest.config.js
+
+5. Candidate service mock reset behavior: fixed  
+Changed clearAllMocks to resetAllMocks in beforeEach.  
+Updated: candidateService.test.ts
+
+6. Redundant Stryker mutate exclusion: fixed  
+Removed redundant negation for tests-JRG file from mutate array.  
+Updated: stryker.conf.json
+
+7. README backend test discovery docs: fixed  
+Updated discovery description to include src/__tests__, src/tests, and the **/tests/**/*.test.ts pattern; also aligned related backend structure and Prisma mock notes.  
+Updated: README.md  
+Updated: README.md  
+Updated: README.md  
+Updated: README.md
+
+Validation run results:
+- Backend aggregator suite now resolves and runs successfully: 109 passed.  
+- Frontend dependency alignment verified after install:
+  - jest 27.5.1
+  - babel-jest 27.5.1
+  - jest-environment-jsdom 27.5.1
+- Frontend Jest config execution verified with current setup; no frontend tests found, exit code 0 under passWithNoTests.
+
+Also updated lockfile due dependency install:
+- package-lock.json
 
 Made changes.
 ```
